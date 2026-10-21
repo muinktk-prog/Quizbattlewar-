@@ -1,0 +1,61 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "appSettings": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'L0YvKVpAcKgiABKed93JgOa9qWj2'"
+    },
+    "questions": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'L0YvKVpAcKgiABKed93JgOa9qWj2'"
+    },
+    "music": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'L0YvKVpAcKgiABKed93JgOa9qWj2'"
+    },
+    "tournaments": {
+      "$tid": {
+        ".read": "auth != null",
+        ".write": "auth != null && auth.uid === 'L0YvKVpAcKgiABKed93JgOa9qWj2'",
+        "participants": {
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid",
+            ".validate": "newData.hasChildren(['uid','name']) && newData.child('uid').val() === auth.uid"
+          }
+        }
+      }
+    },
+    "publicProfiles": {
+      ".read": "auth != null",
+      ".indexOn": [
+        "nameLower"
+      ],
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "matchmaking": {
+      "queue": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      },
+      "inbox": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          "$roomId": {
+            ".write": "auth != null && (auth.uid === $uid || root.child('matches').child($roomId).child('player1Uid').val() === auth.uid)"
+          }
+        }
+      }
+    },
+    "matches": {
+      "$roomId": {
+        ".read": "auth != null && (data.child('player1Uid').val() === auth.uid || data.child('player2Uid').val() === auth.uid)",
+        ".write": "auth != null && ((!data.exists() && newData.child('player1Uid').val() === auth.uid) || data.child('player1Uid').val() === auth.uid || data.child('player2Uid').val() === auth.uid)"
+      }
+    }
+  }
+}
